@@ -3,7 +3,7 @@
     <img src="@/assets/images/home/banner1.png" alt="">
   </div>
   <div class="location">
-    <div class="city" @click="cityClick">北京</div>
+    <div class="city" @click="cityClick">{{currentCity.cityName}}</div>
     <div class="mycity" @click="myCityClick">
       <span class="text">我的位置</span>
       <img src="@/assets/images/home/icon_location.png" alt="">
@@ -14,11 +14,16 @@
 <script setup>
 import axios from 'axios';
 import {useRouter} from 'vue-router'
+import useCityStore from '@/stores/modules/city'
+import { storeToRefs } from 'pinia';
 
 const router = useRouter()
 const cityClick = ()=>{
     router.push('/city')
 }
+
+const cityStore = useCityStore()
+const {currentCity} = storeToRefs(cityStore)
 
 const myCityClick = ()=>{
     navigator.geolocation.getCurrentPosition((res)=>{
@@ -31,12 +36,13 @@ const myCityClick = ()=>{
                 ak:"isRdorT6RbCeFYKncS1BSx06E9fxudeD"
             }
         }).then((res)=>{
-            console.log(res.data.result)
+            console.log(res.data.result.addressComponent.city)
         })
     },err=>{
         console.log("获取位置失败",err);
     })
 }
+
 
 
 </script>

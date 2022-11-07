@@ -5,6 +5,11 @@ export function getHotSuggests(){
 export function getCategories(){
     return myRequest.get({url:'home/categories'})
 }
-export function getHouselist(){
-    return myRequest.get({url:'home/houselist'})
+export function getHouselist(params){
+    return myRequest.get({
+        url:'home/houselist',
+        params:{
+            page:params.page
+        }
+    })
 }

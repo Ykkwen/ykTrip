@@ -1,7 +1,7 @@
 <template>
   <div class="categories">
     <template v-for="(item) in categories" :key="item.id">
-        <div class="item">
+        <div class="item" @click="categoriesClick(item.navigateUrl)">
             <img :src="item.pictureUrl" alt="">
             <div>{{item.title}}</div>
         </div>
@@ -15,6 +15,9 @@ import { storeToRefs } from 'pinia'
 const HomeStore = useHomeStore()
 
 const {categories} = storeToRefs(HomeStore)
+const categoriesClick =(url)=>{
+    window.open(url,"_blank")
+}
 </script>
 
 <style lang="less" scoped>

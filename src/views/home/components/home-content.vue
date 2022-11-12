@@ -3,10 +3,8 @@
     <h2 class="title">热门推荐</h2>
     <div class="list">
       <template v-for="(item) in houseList" :key="item.houseId">
-        <div class="item">
-          {{item.houseId}}
-          <img :src="item.data.image.url" alt="">
-        </div>
+        <houseItemV9 v-if="item.discoveryContentType === 9" :item="item" />
+        <houseItemV3 v-else-if="item.discoveryContentType === 3" :item = "item"/>
       </template>
     </div>
   </div>
@@ -14,49 +12,37 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { ref,defineEmits } from 'vue';
+import { ref, defineEmits, watch } from 'vue';
 import useHomeStore from '../../../stores/modules/home';
+import houseItemV9 from '../../../components/house-item-v9/index.vue';
+import houseItemV3 from '../../../components/house-item-v3/index.vue';
+import useScroll from '../../../hooks/useScroll';
 
 const homeStore = useHomeStore()
-const {houseList} = storeToRefs(homeStore)
+const { houseList,currentPage } = storeToRefs(homeStore)
 
 const emit = defineEmits(['getNewHouseList'])
-const currentPage = ref(1)
 
-const getNewHouseData = ()=>{
-  const scrollTop = document.documentElement.scrollTop
-  const scrollHeight = document.documentElement.scrollHeight
-  const clientHeight = document.documentElement.clientHeight
-  if(scrollTop+clientHeight>=scrollHeight-1){
-    console.log("到达底部")
-    currentPage.value++
-    emit('getNewHouseList',currentPage.value)
+const {isReachBottom} = useScroll()
+
+watch(isReachBottom,(newvalue)=>{
+  if(newvalue){
+    homeStore.fetchHouseListData().then(()=>{
+      isReachBottom.value = false
+    })
   }
-}
-window.addEventListener("scroll",getNewHouseData)
-
+})
 </script>
 
 <style lang="less" scoped>
-.title{
+.title {
   margin-left: 12px;
 }
-.list{
+
+.list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  .item{
-    width: 167px;
-    height: 223px;
-    border-radius: 6px;
-    margin-top: 8px;
-    img{
-      width: 167px;
-      height: 223px;
-      border-radius: 6px;
-    }
 }
-}
-
 </style>

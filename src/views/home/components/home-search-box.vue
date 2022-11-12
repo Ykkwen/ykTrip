@@ -45,7 +45,7 @@
       <div class="btn" @click="searchBtnClick">开始搜索</div>
     </div>
 
-    
+
   </div>
 </template>
 
@@ -57,6 +57,8 @@ import useHomeStore from '@/stores/modules/home'
 import { storeToRefs } from "pinia";
 import { formatMonthDay, getDiffDays } from "@/utils/format_data.js";
 import { ref } from "vue";
+import { Toast } from 'vant';
+import 'vant/es/toast/style';
 
 //获取props
 defineProps({
@@ -90,10 +92,13 @@ const myCityClick = () => {
         })
         .then((res) => {
           console.log(res.data.result.addressComponent.city);
+          Toast.success('获取当前位置成功');
+          cityStore.currentCity.cityName = res.data.result.addressComponent.city.slice(0,2)
         });
     },
     (err) => {
       console.log("获取位置失败", err);
+      Toast.fail('获取当前位置失败');
     }
   );
 };
@@ -122,13 +127,13 @@ const homeStore = useHomeStore()
 const { hotSuggests } = storeToRefs(homeStore)
 
 //搜索页面跳转
-const searchBtnClick = ()=>{
+const searchBtnClick = () => {
   router.push({
-    path:'/search',
-    query:{
-      startDate:startDate.value,
-      endDate:endDate.value,
-      currentCity:currentCity.value.cityName
+    path: '/search',
+    query: {
+      startDate: startDate.value,
+      endDate: endDate.value,
+      currentCity: currentCity.value.cityName
     }
   })
 }
@@ -245,4 +250,5 @@ const searchBtnClick = ()=>{
         linear-gradient(90deg, #fa8c1d, #fcaf3f));
   }
 }
+
 </style>

@@ -20,10 +20,10 @@
                 <div class="price">
                     ¥{{ item.data.productPrice }}
                     <div class="priceTipBadge" v-if="item.data.priceTipBadge">
-                        <van-icon name="volume" />  {{item.data.priceTipBadge.text}}
+                        <van-icon name="volume" /> {{ item.data.priceTipBadge.text }}
                     </div>
                 </div>
-                
+
                 </p>
             </div>
         </div>
@@ -31,12 +31,13 @@
 </template>
   
 <script setup>
-defineProps({
+const props = defineProps({
     item: {
         type: Object,
         default: () => ({})
     }
 })
+
 </script>
   
 <style lang="less" scoped>
@@ -79,10 +80,11 @@ defineProps({
         font-size: 10px;
         padding: 10px 10px 0;
 
-        .pro-location{
+        .pro-location {
             color: #666666;
             margin-bottom: 3px;
         }
+
         .pro-title {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -92,18 +94,21 @@ defineProps({
             -webkit-line-clamp: 2;
             text-overflow: ellipsis;
         }
-        .pro-summaryText{
+
+        .pro-summaryText {
             color: #666666;
         }
+
         .price {
             font-size: 14px;
             margin-top: 5px;
             margin-bottom: 5px;
             color: var(--primary-color);
         }
-        .priceTipBadge{
+
+        .priceTipBadge {
             border-radius: 8px;
-            background-image: linear-gradient(#FF6666,#FF9F9F);
+            background-image: linear-gradient(#FF6666, #FF9F9F);
             color: #fff;
             display: inline-block;
             font-size: 10px;

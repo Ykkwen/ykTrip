@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
-export function formatMonthDay(date){
-    return dayjs(date).format("MM月DD日")
+export function formatMonthDay(date,formaStr="MM月DD日"){
+    return dayjs(date).format(formaStr)
 }
 
 export function getDiffDays(start,end){

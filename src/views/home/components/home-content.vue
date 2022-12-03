@@ -3,8 +3,8 @@
     <h2 class="title">热门推荐</h2>
     <div class="list">
       <template v-for="(item) in houseList" :key="item.houseId">
-        <houseItemV9 v-if="item.discoveryContentType === 9" :item="item" />
-        <houseItemV3 v-else-if="item.discoveryContentType === 3" :item = "item"/>
+        <houseItemV9 v-if="item.discoveryContentType === 9" :item="item" @click.native="houseItemClick(item.data.houseId)"/>
+        <houseItemV3 v-else-if="item.discoveryContentType === 3" :item = "item" @click.native="houseItemClick(item.data.houseId)"/>
       </template>
     </div>
   </div>
@@ -12,33 +12,26 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { ref, defineEmits, watch } from 'vue';
 import useHomeStore from '../../../stores/modules/home';
 import houseItemV9 from '../../../components/house-item-v9/index.vue';
 import houseItemV3 from '../../../components/house-item-v3/index.vue';
-import useScroll from '../../../hooks/useScroll';
+import { useRouter } from 'vue-router';
 
 const homeStore = useHomeStore()
-const { houseList,currentPage } = storeToRefs(homeStore)
-
-const emit = defineEmits(['getNewHouseList'])
-
-const {isReachBottom} = useScroll()
-
-watch(isReachBottom,(newvalue)=>{
-  if(newvalue){
-    homeStore.fetchHouseListData().then(()=>{
-      isReachBottom.value = false
-    })
-  }
-})
+const { houseList } = storeToRefs(homeStore)
+const router = useRouter()
+const houseItemClick = (houseId)=>{
+    router.push(`/houseInfo/${houseId}`)
+}
 </script>
 
 <style lang="less" scoped>
 .title {
   margin-left: 12px;
 }
-
+.content{
+  height:100px;
+}
 .list {
   display: flex;
   flex-direction: row;

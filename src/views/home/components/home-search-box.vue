@@ -15,12 +15,12 @@
     <div class="data-range section" @click="showCalendar = true">
       <div class="start">
         <span class="tip">入住</span>
-        <span class="time"> {{ startDate }} </span>
+        <span class="time"> {{ startDateStr }} </span>
       </div>
       <div class="stay">共{{ stayCount }}晚</div>
       <div class="end">
         <span class="tip">离店</span>
-        <span class="time"> {{ endDate }} </span>
+        <span class="time"> {{ endDateStr }} </span>
       </div>
     </div>
     <van-calendar v-model:show="showCalendar" color="#ff9854" type="range" @confirm="onConfirm" />
@@ -30,7 +30,7 @@
       <div class="people">人数不限</div>
     </div>
     <!--关键字查找-->
-    <van-field v-model="text" placeholder="关键字/位置/民宿" />
+    <van-field placeholder="关键字/位置/民宿" />
 
     <!--热门建议-->
     <div class="hot-message">
@@ -54,19 +54,12 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import useCityStore from "@/stores/modules/city";
 import useHomeStore from '@/stores/modules/home'
+import useMainStore from '@/stores/modules/main';
 import { storeToRefs } from "pinia";
-import { formatMonthDay, getDiffDays } from "@/utils/format_data.js";
-import { ref } from "vue";
+import { formatMonthDay, getDiffDays } from "@/utils/format_date.js";
+import { ref,computed } from "vue";
 import { Toast } from 'vant';
 import 'vant/es/toast/style';
-
-//获取props
-defineProps({
-  hotSuggests: {
-    type: Array,
-    default: () => []
-  }
-})
 
 const router = useRouter();
 const cityClick = () => {
@@ -103,28 +96,33 @@ const myCityClick = () => {
   );
 };
 
-//选择日期
-const nowDate = new Date();
-const newDate = new Date();
-newDate.setDate(nowDate.getDate() + 1);
+//从store中获取热门建议数据
+const homeStore = useHomeStore()
+const { hotSuggests } = storeToRefs(homeStore)
 
-const startDate = ref(formatMonthDay(nowDate));
-const endDate = ref(formatMonthDay(newDate));
-const stayCount = ref(getDiffDays(nowDate, newDate));
+//选择日期
+const mainStore = useMainStore()
+const {startDate,endDate} = storeToRefs(mainStore) 
+
+const startDateStr = computed(()=>formatMonthDay(startDate.value));
+const endDateStr = computed(()=>formatMonthDay(endDate.value));
+const stayCount = ref(getDiffDays(startDate.value, endDate.value));
 
 const showCalendar = ref(false);
 const onConfirm = (value) => {
   const selectStartDate = value[0];
   const selectEndDate = value[1];
-  startDate.value = formatMonthDay(selectStartDate);
-  endDate.value = formatMonthDay(selectEndDate);
+
+  mainStore.startDate = selectStartDate
+  mainStore.endDate = selectEndDate
   stayCount.value = getDiffDays(selectStartDate, selectEndDate);
+
+  console.log(startDateStr.value,endDateStr.value);
+//隐藏日历
   showCalendar.value = false;
+
 };
 
-//从store中获取热门建议数据
-const homeStore = useHomeStore()
-const { hotSuggests } = storeToRefs(homeStore)
 
 //搜索页面跳转
 const searchBtnClick = () => {
